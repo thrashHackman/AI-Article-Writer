@@ -31,10 +31,10 @@ def hash_password(password):
     
 def save_user(username, password):
     """Save a new user to the database."""
-    hashedpassword = hashpassword(password)
+    hashed_password = hash_password(password)
     try:
         with psycopg2.connect(**DB_SETTINGS) as conn:
-            with con.cursor() as cursor:
+            with conn.cursor() as cursor:
                 cursor.execute("INSERT INTO users (username, password) VALUES(%s, %s)", (username, hashed_password))
                 conn.commit()
         Messagebox.show_info("User registered successfully!", "Registration Success")
@@ -51,8 +51,9 @@ def authenticate_user(username, password):
     hashed_password = hash_password(password)
     try:
         with psycopg2.connect(**DB_SETTINGS) as conn:
-            cusrsor.execute("SELECT * FROM users WHERE username = %s AND password = %s", (username, hashed_password))
-            user = cursor.fetchone()
+            with conn.cursor() as cursor:
+                cursor.execute("SELECT * FROM users WHERE username = %s AND password = %s", (username, hashed_password))
+                user = cursor.fetchone()
             return user is not None
     except Exception as e:
         Messagebox.show_error(f"Database Error: {str(e)}", "Login Error")
@@ -61,7 +62,7 @@ def authenticate_user(username, password):
 def generate_article(topic, output_area):
     """Generate a LinkedIn article using OpenAI."""
     if not topic.strip():
-        Message.show_error("The topic field cannot be empty.", "Input Error")
+        Messagebox.show_error("The topic field cannot be empty.", "Input Error")
         return
     try:
         output_area.delete(1.0, END)
@@ -75,7 +76,7 @@ def generate_article(topic, output_area):
             temperature = 0.7 # Control creativity 0 - 2 (0.7) is standard
         )
         article = response.choices[0].message.content.strip()
-        output_area.insert(END, aricle)
+        output_area.insert(END, article)
     except Exception as e:
         Messagebox.show_error(f"Failed to generate the article: {str(e)}", "API Error")
         return None
