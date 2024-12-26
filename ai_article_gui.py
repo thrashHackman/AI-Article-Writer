@@ -81,30 +81,79 @@ def generate_article(topic, output_area):
         Messagebox.show_error(f"Failed to generate the article: {str(e)}", "API Error")
         return None
     
-def save_article(topic, article):
+def save_article(output_area, topic):
     """Save the article to a file."""
-    filename = os.path.join(SAVE_DIR, f"{topic.replace(' ', '_')}.txt")
-    with open(filename, "w") as file:
-        file.write(article)
-    print(f"Article save to {filename}")
+    article = output_area.get(1.0, END).strip()
+    if not article:
+        Messagebox.show_error("No article to save. Please generate an article first.", "Save Error")
+        return
     
+    try:
+        sanitized_topic = "".join(c for c in topic if c.isalnum() or c in (" ", "-")).replace(" ", "_")
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        file_name = f"{timestamp}_{sanitized_topic}.txt"
+        file_path = os.path.join(SAVE_DIR, file_name)
+
+        with open(file_path, "w") as file:
+            file.write(article)
+        Messagebox.show_info(f"Article saved to {file_path}", "Success")
+    except Exception as e:
+        Messagebox.show_error(f"Failed to save the article: {str(e)}", "Save Error")
+    
+def clear_output(output_area):
+    """Clear the output area."""
+    output_area.delete(1.0, END)
+
+def login(username_entry, password_entry, app):
+    username = username_entry.get().strip()
+    password = password_entry.get().strip()
+    if authenticate_user(username, password):
+        article_creator_screen(app)
+
+def article_creator_screen(app):
+    """Display the article creator screen."""
+    for widget in app.winfo_children():
+        widget.destroy()
+
+    app.title("AI Article Generator")
+
+    ttk.Label(app, text="Enter a Topic:", font=("Helvetica", 16, "bold")).pack(pady=10)
+    topic_entry = ttk.Entry(app, font=("Helvetica", 14), width=70)
+    topic_entry.pack(pady=10)
+
+    ttk.Label(app, text="Generated Article:", font=("Helvetica", 16, "bold")).pack(pady=10)
+    output_area = ttk.Text(app, wrap=WORD, font=("Helvetica", 12), height=20, width=80)
+    output_area.pack(pady=10, padx=10, fill=BOTH, expand=True)
+
+    button_frame = ttk.Frame(app)
+    button_frame.pack(pady=20)
+
+    ttk.Button(
+        button_frame, text="Generate Article", bootstyle=PRIMARY,
+        command=lambda: generate_article(topic_entry.get(), output_area)
+    ).grid(row=0, column=0, padx=10)
+
+    ttk.Button(
+        button_frame, text="Save Article", bootstyle=SUCCESS,
+        command=lambda: save_article(output_area, topic_entry.get())
+    ).grid(row=0, column=1, padx=10)
+
+    ttk.Button(
+        button_frame, text="Clear Output", bootstyle=WARNING,
+        command=lambda: clear_output(output_area)
+    ).grid(row=0, column=2, padx=10)
+
+    ttk.Button(
+        button_frame, text="Logout", bootstyle=DANGER, command=lambda: article_creator_screen(app)
+    ).grid(row=0, column=3, padx=10)
+
+# Run the application
+def create_gui():
+    app = ttk.Window(themename="flatly")
+    app.geometry("900x700")
+    app.resizable(True, True)
+    article_creator_screen(app)
+    app.mainloop()
+
 if __name__ == "__main__":
-    # Get user input
-    topic = input("Enter a topic for the LinkedIn article: ").strip()
-    if topic:
-        print("Generating article...")
-        article = generate_article(topic)
-        if article:
-            print("\nGenerated Article:\n")
-            print(article)
-            
-            # Save the article
-            save_choice = input("\nDo you want to save the article? (y/n): ")
-            if save_choice == 'y':
-                save_article(topic, article)
-            else:
-                print("Article not saved.")
-        else:
-            print("Failed to generate article.")
-    else:
-        print("No topic provided. Exiting.")
+    create_gui()
