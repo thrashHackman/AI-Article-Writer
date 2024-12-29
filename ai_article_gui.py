@@ -104,11 +104,49 @@ def clear_output(output_area):
     """Clear the output area."""
     output_area.delete(1.0, END)
 
-def login(username_entry, password_entry, app):
-    username = username_entry.get().strip()
-    password = password_entry.get().strip()
-    if authenticate_user(username, password):
-        article_creator_screen(app)
+def login_screen(app):
+    """Display the login screen."""
+    for widget in app.winfo_children():
+        widget.destroy()
+
+    ttk.Label(app, text="Login", font=("Helvetica", 20, "bold")).pack(pady=20)
+    username_entry = ttk.Entry(app, font=("Helvetica", 14), width=30)
+    username_entry.pack(pady=10)
+    username_entry.insert(0, "Username")
+    password_entry = ttk.Entry(app, font=("Helvetica", 14), show="*", width=30)
+    password_entry.pack(pady=10)
+    password_entry.insert(0, "Password")
+
+    def login():
+        username = username_entry.get().strip()
+        password = password_entry.get().strip()
+        if authenticate_user(username, password):
+            article_creator_screen(app)
+
+    ttk.Button(app, text="Login", bootstyle=PRIMARY, command=login).pack(pady=10)
+    ttk.Button(app, text="Register", bootstyle=SUCCESS, command=lambda: register_screen(app)).pack(pady=10)
+
+def register_screen(app):
+    """Display the registration screen."""
+    for widget in app.winfo_children():
+        widget.destroy()
+
+    ttk.Label(app, text="Register", font=("Helvetica", 20, "bold")).pack(pady=20)
+    username_entry = ttk.Entry(app, font=("Helvetica", 14), width=30)
+    username_entry.pack(pady=10)
+    username_entry.insert(0, "Username")
+    password_entry = ttk.Entry(app, font=("Helvetica", 14), show="*", width=30)
+    password_entry.pack(pady=10)
+    password_entry.insert(0, "Password")
+
+    def register():
+        username = username_entry.get().strip()
+        password = password_entry.get().strip()
+        if save_user(username, password):
+            login_screen(app)
+
+    ttk.Button(app, text="Register", bootstyle=SUCCESS, command=register).pack(pady=10)
+    ttk.Button(app, text="Back to Login", bootstyle=INFO, command=lambda: login_screen(app)).pack(pady=10)
 
 def article_creator_screen(app):
     """Display the article creator screen."""
@@ -144,7 +182,7 @@ def article_creator_screen(app):
     ).grid(row=0, column=2, padx=10)
 
     ttk.Button(
-        button_frame, text="Logout", bootstyle=DANGER, command=lambda: article_creator_screen(app)
+        button_frame, text="Logout", bootstyle=DANGER, command=lambda: login_screen(app)
     ).grid(row=0, column=3, padx=10)
 
 # Run the application
@@ -152,7 +190,7 @@ def create_gui():
     app = ttk.Window(themename="flatly")
     app.geometry("900x700")
     app.resizable(True, True)
-    article_creator_screen(app)
+    login_screen(app)
     app.mainloop()
 
 if __name__ == "__main__":
