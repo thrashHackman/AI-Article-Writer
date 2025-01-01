@@ -1,0 +1,7 @@
+{
+    "python.testing.pytestArgs": [
+        "Dictionary_version"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true
+}
