@@ -5,6 +5,48 @@ import hashlib
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 from ttkbootstrap.dialogs import Messagebox
+import sqlite3
+
+# Create a connection to the SQLite database
+DB_FILE = "users.db"
+def initialize_db():
+    """Initialize the SQLite database."""
+    with sqlite3.connect(DB_FILE) as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS users (
+                username TEXT PRIMARY KEY,
+                password TEXT NOT NULL
+            )
+            """
+        )
+        conn.commit()
+        conn.close
+
+initialize_db()
+
+#Save user to the SQLite database
+def save_user_to_db(username, hashed_password):
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+    try:
+        cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed_password))
+        conn.commit()
+    except sqlite3.IntegrityError:
+        Messagebox.show_error("Username already exists. Please choose a different username.", "Registration Error")
+    finally:
+        conn.close()
+
+# Authenticate user from the SQLite database
+def authenticate_user_from_db(username, hashed_password):
+    hashed_password
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, hashed_password))
+    user = cursor.fetchone()
+    conn.close()
+    return user is not None
 
 # Set your OpenAI API key
 openai.api_key = "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"  # Replace with your actual API key
