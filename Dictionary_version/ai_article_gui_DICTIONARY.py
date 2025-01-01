@@ -24,8 +24,6 @@ def initialize_db():
         conn.commit()
         conn.close
 
-initialize_db()
-
 #Save user to the SQLite database
 def save_user_to_db(username, hashed_password):
     conn = sqlite3.connect(DB_FILE)
@@ -144,8 +142,13 @@ def login_screen(app):
     def login():
         username = username_entry.get().strip()
         password = password_entry.get().strip()
-        if authenticate_user(username, password):
+        if not username or not password:
+            Messagebox.show_error("Username and password cannot be empty.", "Login Error")
+            return
+        if authenticate_user_from_db(username, hash_password(password)):
             article_creator_screen(app)
+        else:
+            Messagebox.show_error("Invalid username or password.", "Login Error")
 
     ttk.Button(app, text="Login", bootstyle=PRIMARY, command=login).pack(pady=10)
     ttk.Button(app, text="Register", bootstyle=SUCCESS, command=lambda: register_screen(app)).pack(pady=10)
@@ -166,8 +169,11 @@ def register_screen(app):
     def register():
         username = username_entry.get().strip()
         password = password_entry.get().strip()
-        if save_user(username, password):
-            login_screen(app)
+        if not username or not password:
+            Messagebox.show_error("Username and password cannot be empty.", "Registration Error")
+            return
+        save_user_to_db(username, hash_password(password))
+        login_screen(app)
 
     ttk.Button(app, text="Register", bootstyle=SUCCESS, command=register).pack(pady=10)
     ttk.Button(app, text="Back to Login", bootstyle=INFO, command=lambda: login_screen(app)).pack(pady=10)
@@ -218,4 +224,5 @@ def create_gui():
     app.mainloop()
 
 if __name__ == "__main__":
+    initialize_db()
     create_gui()
