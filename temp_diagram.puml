@@ -1,0 +1,21 @@
+
+    @startuml temp_diagram
+    rectangle GUI {
+        component "Login" as Login
+        component "Article Generator" as Generator
+        component "File Manager" as FileManager
+    }
+
+    rectangle Backend {
+        component "Authentication Service" as Auth
+        component "Database" as DB
+        component "Email Service" as Email
+        component "AI API (OpenAI)" as OpenAI
+    }
+
+    Login --> Auth
+    Generator --> OpenAI
+    FileManager --> DB
+    Generator --> Email
+    @enduml
+    
