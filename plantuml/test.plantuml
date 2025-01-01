@@ -1,0 +1,5 @@
+@startuml vscode_test
+skinparam Style strictuml
+skinparam SequenceMessageAlignment center
+A -> B : Hello World!
+@enduml
