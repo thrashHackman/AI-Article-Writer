@@ -9,6 +9,7 @@ import sqlite3
 
 # Create a connection to the SQLite database
 DB_FILE = "users.db"
+
 def initialize_db():
     """Initialize the SQLite database."""
     with sqlite3.connect(DB_FILE) as conn:
