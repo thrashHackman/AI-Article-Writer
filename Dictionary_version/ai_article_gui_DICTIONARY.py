@@ -7,6 +7,10 @@ from ttkbootstrap.constants import * # Import the constants from ttkbootstrap
 from ttkbootstrap.dialogs import Messagebox # Import the Messagebox dialog from ttkbootstrap
 import sqlite3 # Import the SQLite3 module
 from plantuml import PlantUML # Import the PlantUML module
+from dotenv import load_dotenv # Import the load_dotenv function from the dotenv module
+
+# Load environment variables from the .env file
+load_dotenv()
 
 # Constants
 PLANTUML_JAR = "/home/tahraun/plantuml/plantuml.jar" # Path to the PlantUML JAR file
