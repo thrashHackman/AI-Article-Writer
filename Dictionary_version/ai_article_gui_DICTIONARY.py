@@ -9,24 +9,14 @@ import sqlite3 # Import the SQLite3 module
 from plantuml import PlantUML # Import the PlantUML module
 from dotenv import load_dotenv # Import the load_dotenv function from the dotenv module
 
-# Load environment variables from the .env file
-load_dotenv()
-
 # Constants
 PLANTUML_JAR = "/home/tahraun/plantuml/plantuml.jar" # Path to the PlantUML JAR file
 DB_FILE = "users.db" # Path to the SQLite database file
-
-# Access the API key from the environment variable
-openai.api_key = os.getenv("OPENAI_API_KEY")
-
-# Directory to save articles
-SAVE_DIR = "LinkedIn/articles"  # Replace with your desired save directory
-
-# User dictionary for storing users in memory 
-users = {}
-
-# Ensure the save directory exists
-os.makedirs(SAVE_DIR, exist_ok=True)
+load_dotenv() # Load environment variables from the .env file
+SAVE_DIR = "LinkedIn/articles" # Directory to save articles
+users = {}# User dictionary for storing users in memory
+openai.api_key = os.getenv("OPENAI_API_KEY") # Access the API key from the environment variable
+os.makedirs(SAVE_DIR, exist_ok=True) # Ensure the save directory exists
 
 # Generate a PlantUML diagram
 def generate_diagram(diagram_code, output_file):
@@ -222,7 +212,7 @@ def login_screen(app):
     password_entry.pack(pady=10)
     password_entry.insert(0, "Password")
 
-# Authenticate the user
+    # Authenticate the user
     def login():
         username = username_entry.get().strip()
         password = password_entry.get().strip()
@@ -265,6 +255,7 @@ def register_screen(app):
     ttk.Button(app, text="Register", bootstyle=SUCCESS, command=register).pack(pady=10)
     ttk.Button(app, text="Back to Login", bootstyle=INFO, command=lambda: login_screen(app)).pack(pady=10)
 
+# Display Article Generator Screen
 def article_creator_screen(app):
     """Display the article creator screen."""
     for widget in app.winfo_children():
@@ -310,6 +301,7 @@ def create_gui():
     login_screen(app)
     app.mainloop()
 
+# Initializes the program
 if __name__ == "__main__":
     initialize_db()
     create_gui()
