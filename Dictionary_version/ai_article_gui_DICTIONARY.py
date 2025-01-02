@@ -1,24 +1,30 @@
-import openai
-import os
-import datetime
-import hashlib
-import ttkbootstrap as ttk
-from ttkbootstrap.constants import *
-from ttkbootstrap.dialogs import Messagebox
-import sqlite3
-import openai
-import os
-import datetime
-import hashlib
-import ttkbootstrap as ttk
-from ttkbootstrap.constants import *
-from ttkbootstrap.dialogs import Messagebox
-import sqlite3
-from plantuml import PlantUML
+import openai # Import the OpenAI module
+import os # Import the OS module
+import datetime # Import the datetime module
+import hashlib # Import the hashlib module
+import ttkbootstrap as ttk # Import the ttkbootstrap module
+from ttkbootstrap.constants import * # Import the constants from ttkbootstrap
+from ttkbootstrap.dialogs import Messagebox # Import the Messagebox dialog from ttkbootstrap
+import sqlite3 # Import the SQLite3 module
+from plantuml import PlantUML # Import the PlantUML module
 
-# URL of the PlantUML server or local JAR file
-PLANTUML_JAR = "/home/tahraun/plantuml/plantuml.jar"
+# Constants
+PLANTUML_JAR = "/home/tahraun/plantuml/plantuml.jar" # Path to the PlantUML JAR file
+DB_FILE = "users.db" # Path to the SQLite database file
 
+# Set your OpenAI API key
+openai.api_key = "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"  # Replace with your actual API key
+
+# Directory to save articles
+SAVE_DIR = "LinkedIn/articles"  # Replace with your desired save directory
+
+# User dictionary for storing users in memory 
+users = {}
+
+# Ensure the save directory exists
+os.makedirs(SAVE_DIR, exist_ok=True)
+
+# Generate a PlantUML diagram
 def generate_diagram(diagram_code, output_file):
     """Generate a PlantUML diagram."""
     with open("temp_diagram.puml", "w") as file:
@@ -32,6 +38,7 @@ def generate_diagram(diagram_code, output_file):
     except Exception as e:
         print(f"Error generating diagram: {e}")
 
+# Create a workflow diagram
 def create_workflow_diagram():
     diagram_code = """
     @startuml
@@ -57,6 +64,7 @@ def create_workflow_diagram():
     """
     generate_diagram(diagram_code, "/home/tahraun/Documents/AI_Article/AI-Article-Writer/01. PlantUML/workflow.png")
 
+# Create an architecture diagram
 def create_architecture_diagram():
     diagram_code = """
     @startuml
@@ -81,9 +89,7 @@ def create_architecture_diagram():
     """
     generate_diagram(diagram_code, "/home/tahraun/Documents/AI_Article/AI-Article-Writer/01. PlantUML/architecture.png")
 
-# Create a connection to the SQLite database
-DB_FILE = "users.db"
-
+# Initialize the SQLite database
 def initialize_db():
     """Initialize the SQLite database."""
     with sqlite3.connect(DB_FILE) as conn:
@@ -121,22 +127,12 @@ def authenticate_user_from_db(username, hashed_password):
     conn.close()
     return user is not None
 
-# Set your OpenAI API key
-openai.api_key = "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"  # Replace with your actual API key
-
-# Directory to save articles
-SAVE_DIR = "LinkedIn/articles"  # Replace with your desired save directory
-
-# User dictionary for storing users in memory 
-users = {}
-
-# Ensure the save directory exists
-os.makedirs(SAVE_DIR, exist_ok=True)
-
+# Hash a password using SHA256
 def hash_password(password):
     """Hash a password using SHA256."""
     return hashlib.sha256(password.encode()).hexdigest()
 
+# Save a new user to the in-memory dictionary
 def save_user(username, password):
     """Save a new user to the in-memory dictionary."""
     hashed_password = hash_password(password)
@@ -147,6 +143,7 @@ def save_user(username, password):
     Messagebox.show_info("User registered successfully!", "Registration Success")
     return True
 
+# Authenticate a user by checking their credentials
 def authenticate_user(username, password):
     """Authenticate a user by checking their credentials."""
     hashed_password = hash_password(password)
@@ -156,6 +153,7 @@ def authenticate_user(username, password):
         Messagebox.show_error("Invalid username or password.", "Login Error")
         return False
 
+# Generate an article using OpenAI
 def generate_article(topic, output_area):
     """Generate a LinkedIn article using OpenAI."""
     if not topic.strip():
@@ -178,6 +176,7 @@ def generate_article(topic, output_area):
     except Exception as e:
         Messagebox.show_error(f"Failed to generate the article: {str(e)}", "API Error")
 
+# Save the article to a file
 def save_article(output_area, topic):
     """Save the article to a file."""
     article = output_area.get(1.0, END).strip()
@@ -197,16 +196,21 @@ def save_article(output_area, topic):
     except Exception as e:
         Messagebox.show_error(f"Failed to save the article: {str(e)}", "Save Error")
 
+# Clear the output area
 def clear_output(output_area):
     """Clear the output area."""
     output_area.delete(1.0, END)
 
+# Create the GUI
 def login_screen(app):
     """Display the login screen."""
     for widget in app.winfo_children():
         widget.destroy()
 
+    app.title("Tahraun's AI Article Generator")
+
     ttk.Label(app, text="Login", font=("Helvetica", 20, "bold")).pack(pady=20)
+    ttk.Label(app, text="LinkedIn Article Generator", font=("Helvetica", 16)).pack(pady=20)
     username_entry = ttk.Entry(app, font=("Helvetica", 14), width=30)
     username_entry.pack(pady=10)
     username_entry.insert(0, "Username")
@@ -214,6 +218,7 @@ def login_screen(app):
     password_entry.pack(pady=10)
     password_entry.insert(0, "Password")
 
+# Authenticate the user
     def login():
         username = username_entry.get().strip()
         password = password_entry.get().strip()
@@ -227,11 +232,14 @@ def login_screen(app):
 
     ttk.Button(app, text="Login", bootstyle=PRIMARY, command=login).pack(pady=10)
     ttk.Button(app, text="Register", bootstyle=SUCCESS, command=lambda: register_screen(app)).pack(pady=10)
-
+    
+# Register the user
 def register_screen(app):
     """Display the registration screen."""
     for widget in app.winfo_children():
         widget.destroy()
+
+    app.title("Tahraun's AI Article Generator")
 
     ttk.Label(app, text="Register", font=("Helvetica", 20, "bold")).pack(pady=20)
     username_entry = ttk.Entry(app, font=("Helvetica", 14), width=30)
@@ -258,7 +266,7 @@ def article_creator_screen(app):
     for widget in app.winfo_children():
         widget.destroy()
 
-    app.title("AI Article Generator")
+    app.title("Tahraun's AI Article Generator")
 
     ttk.Label(app, text="Enter a Topic:", font=("Helvetica", 16, "bold")).pack(pady=10)
     topic_entry = ttk.Entry(app, font=("Helvetica", 14), width=70)
