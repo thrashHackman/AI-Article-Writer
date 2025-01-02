@@ -14,7 +14,7 @@ PLANTUML_JAR = "/home/tahraun/plantuml/plantuml.jar" # Path to the PlantUML JAR 
 DB_FILE = "users.db" # Path to the SQLite database file
 load_dotenv() # Load environment variables from the .env file
 SAVE_DIR = "LinkedIn/articles" # Directory to save articles
-users = {}# User dictionary for storing users in memory
+users = {} # User dictionary for storing users in memory
 openai.api_key = os.getenv("OPENAI_API_KEY") # Access the API key from the environment variable
 os.makedirs(SAVE_DIR, exist_ok=True) # Ensure the save directory exists
 
