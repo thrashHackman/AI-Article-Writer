@@ -1,169 +1,123 @@
-# **AI Article Generator**
+# Tahraun's AI Article Generator
 
-## **Table of Contents**
-1. [Introduction](#introduction)
-2. [Features](#features)
-3. [Technologies Used](#technologies-used)
-4. [Installation](#installation)
-5. [Usage](#usage)
-6. [Code Overview](#code-overview)
-7. [Troubleshooting](#troubleshooting)
-8. [Future Enhancements](#future-enhancements)
-9. [License](#license)
+Tahraun's AI Article Generator is a Python-based application that uses OpenAI's GPT-3.5 model to generate LinkedIn articles, allowing users to save and manage them efficiently. This project integrates SQLite for user authentication and PlantUML for visual documentation of workflows and architecture.
 
----
+## Features
 
-## **Introduction**
+- **User Authentication**: Secure user registration and login using hashed passwords stored in an SQLite database.
+- **Article Generation**: Generate professional LinkedIn articles using OpenAI's GPT-3.5-turbo model.
+- **File Management**: Save generated articles with timestamped filenames in a structured directory.
+- **Diagram Generation**: Automatically generate workflow and architecture diagrams using PlantUML.
+- **Responsive GUI**: Built with `ttkbootstrap` for a modern and user-friendly interface.
 
-The **AI Article Generator** is a user-friendly desktop application designed to generate professional LinkedIn-style articles using OpenAI's GPT-3.5 model. This application allows users to register and log in, enter a topic, and generate AI-driven articles, which can be saved to a local directory.
+## Project Structure
 
----
+```
+AI_Article_Generator/
+├── LinkedIn/articles/        # Directory for saving articles
+├── output/diagrams/          # Directory for storing generated diagrams
+├── users.db                  # SQLite database for user authentication
+├── temp_diagram.puml         # Temporary file for PlantUML diagrams
+├── ai_article_generator.py   # Main Python application
+└── README.md                 # Documentation
+```
 
-## **Features**
+## Prerequisites
 
-- **User Authentication**: Register and log in with secure password hashing.
-- **AI-Powered Article Generation**: Generate detailed LinkedIn articles based on user-provided topics.
-- **Modern GUI**: Built using `ttkbootstrap` for a sleek and responsive interface.
-- **File Management**: Save articles to a designated folder with a timestamped filename.
-- **In-Memory User Management**: Eliminates the need for a database by storing users in memory.
+- Python 3.7 or higher
+- OpenAI API key
+- PlantUML (local installation with JAR file)
+- SQLite3
+- Required Python modules:
+  - `openai`
+  - `ttkbootstrap`
+  - `sqlite3`
+  - `hashlib`
+  - `datetime`
 
----
+## Installation
 
-## **Technologies Used**
-
-- **Programming Language**: Python 3.11+
-- **Libraries**:
-  - `openai`: For GPT-3.5 API integration.
-  - `ttkbootstrap`: For modern GUI design.
-  - `hashlib`: For secure password hashing.
-  - `os`: For file management.
-  - `datetime`: For timestamping saved articles.
-
----
-
-## **Installation**
-
-### **Prerequisites**
-1. Python 3.11 or later
-2. OpenAI API Key
-
-### **Steps**
-1. Clone the repository:
+1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/your-repo/ai-article-generator.git
-   cd ai-article-generator
+   git clone https://github.com/your-repo/AI_Article_Generator.git
+   cd AI_Article_Generator
    ```
 
-2. Install required dependencies:
+2. **Install Dependencies**:
    ```bash
-   pip install openai ttkbootstrap
+   pip install openai ttkbootstrap plantuml
    ```
 
-3. Set up the directory for saving articles:
-   - By default, articles are saved to `LinkedIn/articles`. You can change this by modifying the `SAVE_DIR` variable in the code.
+3. **Set Up PlantUML**:
+   - Download the `plantuml.jar` file from the [PlantUML website](https://plantuml.com/download).
+   - Update the `PLANTUML_JAR` variable in the script with the path to your `plantuml.jar`.
 
-4. Set your OpenAI API key:
-   - Replace the placeholder in the code:
-     ```python
-     openai.api_key = "YOUR_API_KEY"
-     ```
-
-5. Run the application:
+4. **Initialize Database**:
+   Run the script to create the SQLite database:
    ```bash
-   python3 ai_article_gui.py
+   python ai_article_generator.py
    ```
 
----
+## Usage
 
-## **Usage**
+1. **Start the Application**:
+   ```bash
+   python ai_article_generator.py
+   ```
 
-1. **Launch the Application**:
-   - Run the script to open the GUI.
-   - Enter your credentials to log in or register as a new user.
+2. **User Authentication**:
+   - **Register**: Create a new user account.
+   - **Login**: Access the article generator interface.
 
-2. **Generate Articles**:
-   - Enter a topic in the input field and click "Generate Article."
-   - The article will appear in the text area.
+3. **Generate Articles**:
+   - Enter a topic and click "Generate Article" to create an article using GPT-3.5.
+   - Save articles with timestamped filenames.
 
-3. **Save Articles**:
-   - Click "Save Article" to save the generated article to the designated folder.
+4. **View and Manage Diagrams**:
+   - Workflow and architecture diagrams are automatically generated and saved in `output/diagrams/`.
 
-4. **Clear Output**:
-   - Click "Clear Output" to reset the text area for a new article.
+## Key Components
 
-5. **Logout**:
-   - Click "Logout" to return to the login screen.
-
----
-
-## **Code Overview**
-
-### **User Management**
-- **Registration**:
-  - Users are stored in an in-memory dictionary with hashed passwords.
-  ```python
-  users[username] = hashed_password
-  ```
-- **Login**:
-  - Validates credentials against the in-memory dictionary.
-  ```python
-  if username in users and users[username] == hashed_password:
+### SQLite Database
+- **Path**: `users.db`
+- **Schema**:
+  ```sql
+  CREATE TABLE IF NOT EXISTS users (
+      username TEXT PRIMARY KEY,
+      password TEXT NOT NULL
+  );
   ```
 
-### **Article Generation**
-- Powered by OpenAI's GPT-3.5 API.
-- The `generate_article` function generates articles based on user-provided topics:
-  ```python
-  response = openai.ChatCompletion.create(
-      model="gpt-3.5-turbo",
-      messages=[
-          {"role": "system", "content": "You are a professional LinkedIn article writer."},
-          {"role": "user", "content": f"Write an article about {topic.strip()}."}
-      ],
-      max_tokens=3000,
-      temperature=1.3
-  )
-  ```
+### GUI Features
+- **Login/Registration Screen**:
+  - Username and password fields with placeholders.
+  - "Show Password" toggle button (`👁️` to show, `🙈` to hide).
+- **Article Generator Screen**:
+  - Text field for entering topics.
+  - Buttons for generating, saving, clearing, and logging out.
 
-### **File Saving**
-- Articles are saved with sanitized filenames and timestamps:
-  ```python
-  file_name = f"{timestamp}_{sanitized_topic}.txt"
-  ```
+### PlantUML Integration
+- **Workflow Diagram**: Shows user interactions with the system.
+- **Architecture Diagram**: Visualizes system components and their interactions.
 
----
+## Troubleshooting
 
-## **Troubleshooting**
+1. **PlantUML Errors**:
+   - Ensure `java` is installed and properly configured in your system PATH.
+   - Verify the `PLANTUML_JAR` path is correct.
 
-### **Common Issues**
-1. **OpenAI API Key Error**:
-   - Ensure you have replaced the placeholder API key with a valid key:
-     ```python
-     openai.api_key = "YOUR_API_KEY"
-     ```
+2. **OpenAI API Key Issues**:
+   - Ensure you have a valid API key and it is correctly set in the `openai.api_key` variable.
 
-2. **Dependencies Not Installed**:
-   - Install required libraries:
-     ```bash
-     pip install openai ttkbootstrap
-     ```
+3. **Module Import Errors**:
+   - Install missing modules using `pip install <module-name>`.
 
-3. **Save Directory Error**:
-   - Ensure the save directory exists or modify the `SAVE_DIR` path.
+## Future Enhancements
 
-4. **Invalid Login Credentials**:
-   - Check if the username and password are correctly registered in memory.
+- Add email functionality for sharing articles directly from the application.
+- Integrate more detailed reporting features.
+- Enhance the GUI with themes and additional customization.
 
----
+## Author
 
-## **Future Enhancements**
-
-- Add persistent storage for user management using a database.
-- Include a feature to edit or delete saved articles.
-- Support for generating articles in multiple languages.
-
----
-
-## **License**
-
-This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
+- **Tahraun** - [LinkedIn](https://www.linkedin.com/in/tahraun)
