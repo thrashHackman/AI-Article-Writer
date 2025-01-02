@@ -311,8 +311,3 @@ if __name__ == "__main__":
     create_gui()
     create_workflow_diagram()
     create_architecture_diagram()
-
-if os.getenv("OPENAI_API_KEY"):
-    print("API key successfully loaded from environment")
-else:
-    print("Failed to load API key")
