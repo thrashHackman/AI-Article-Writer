@@ -12,8 +12,8 @@ from plantuml import PlantUML # Import the PlantUML module
 PLANTUML_JAR = "/home/tahraun/plantuml/plantuml.jar" # Path to the PlantUML JAR file
 DB_FILE = "users.db" # Path to the SQLite database file
 
-# Set your OpenAI API key
-openai.api_key = "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"  # Replace with your actual API key
+# Access the API key from the environment variable
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # Directory to save articles
 SAVE_DIR = "LinkedIn/articles"  # Replace with your desired save directory
@@ -311,3 +311,8 @@ if __name__ == "__main__":
     create_gui()
     create_workflow_diagram()
     create_architecture_diagram()
+
+if os.getenv("OPENAI_API_KEY"):
+    print("API key successfully loaded from environment")
+else:
+    print("Failed to load API key")
