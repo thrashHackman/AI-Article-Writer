@@ -8,16 +8,15 @@ from ttkbootstrap.dialogs import Messagebox # Import the Messagebox dialog from 
 import sqlite3 # Import the SQLite3 module
 from plantuml import PlantUML # Import the PlantUML module
 from dotenv import load_dotenv # Import the load_dotenv function from the dotenv module
-
-# Load environment variables from the .env file
-load_dotenv()
+import re # Import the re module
 
 # Constants
 PLANTUML_JAR = "/home/tahraun/plantuml/plantuml.jar" # Path to the PlantUML JAR file
 DB_FILE = "users.db" # Path to the SQLite database file
 
-# Access the API key from the environment variable
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# Set your OpenAI API key
+load_dotenv() # Load the .env file
+openai.api_key = os.getenv('API_KEY')
 
 # Directory to save articles
 SAVE_DIR = "LinkedIn/articles"  # Replace with your desired save directory
@@ -259,11 +258,33 @@ def register_screen(app):
         if not username or not password:
             Messagebox.show_error("Username and password cannot be empty.", "Registration Error")
             return
+        
+        # Validate password strength
+        password_error = validate_password(password)
+        if password_error:
+            Messagebox.show_error(password_error, "Password Error")
+            return
+        
         save_user_to_db(username, hash_password(password))
         login_screen(app)
 
     ttk.Button(app, text="Register", bootstyle=SUCCESS, command=register).pack(pady=10)
     ttk.Button(app, text="Back to Login", bootstyle=INFO, command=lambda: login_screen(app)).pack(pady=10)
+
+# Password validation function
+def validate_password(password):
+    """Validate password strength."""
+    if len(password) < 8:
+        return "Password must be at least 8 characters long."
+    if not re.search(r"[A-Z]", password):
+        return "Password must contain at least one uppercase letter."
+    if not re.search(r"[a-z]", password):
+        return "Password must contain at least one lowercase letter."
+    if not re.search(r"[0-9]", password):
+        return "Password must contain at least one digit."
+    if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
+        return "Password must contain at least one special character."
+    return None
 
 def article_creator_screen(app):
     """Display the article creator screen."""
