@@ -14,18 +14,12 @@ import re # Import the re module
 PLANTUML_JAR = "/home/tahraun/plantuml/plantuml.jar" # Path to the PlantUML JAR file
 DB_FILE = "users.db" # Path to the SQLite database file
 
-# Set your OpenAI API key
-load_dotenv() # Load the .env file
-openai.api_key = os.getenv('API_KEY')
-
-# Directory to save articles
-SAVE_DIR = "LinkedIn/articles"  # Replace with your desired save directory
-
-# User dictionary for storing users in memory 
+# In-memory dictionary to store users
 users = {}
-
-# Ensure the save directory exists
-os.makedirs(SAVE_DIR, exist_ok=True)
+# Set your OpenAI API key
+openai.api_key = os.getenv("OPENAI_API_KEY") # Access the API key from the environment variable
+SAVE_DIR = "articles" # Define the save directory
+os.makedirs(SAVE_DIR, exist_ok=True) # Ensure the save directory exists
 
 # Generate a PlantUML diagram
 def generate_diagram(diagram_code, output_file):
@@ -221,7 +215,7 @@ def login_screen(app):
     password_entry.pack(pady=10)
     password_entry.insert(0, "Password")
 
-# Authenticate the user
+    # Authenticate the user
     def login():
         username = username_entry.get().strip()
         password = password_entry.get().strip()
@@ -300,6 +294,7 @@ def validate_username(username):
         return "Username must contain only alphanumeric characters."
     return None
 
+# Display Article Generator Screen
 def article_creator_screen(app):
     """Display the article creator screen."""
     for widget in app.winfo_children():
@@ -345,6 +340,7 @@ def create_gui():
     login_screen(app)
     app.mainloop()
 
+# Initializes the program
 if __name__ == "__main__":
     initialize_db()
     create_gui()
