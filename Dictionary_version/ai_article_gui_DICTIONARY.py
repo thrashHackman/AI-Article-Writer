@@ -259,6 +259,12 @@ def register_screen(app):
             Messagebox.show_error("Username and password cannot be empty.", "Registration Error")
             return
         
+        # Validate username format
+        username_error = validate_username(username)
+        if username_error:
+            Messagebox.show_error(username_error, "Username Error")
+            return
+
         # Validate password strength
         password_error = validate_password(password)
         if password_error:
@@ -284,6 +290,14 @@ def validate_password(password):
         return "Password must contain at least one digit."
     if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
         return "Password must contain at least one special character."
+    return None
+
+def validate_username(username):
+    """Validate username format."""
+    if len(username) < 4:
+        return "Username must be at least 4 characters long."
+    if not username.isalnum():
+        return "Username must contain only alphanumeric characters."
     return None
 
 def article_creator_screen(app):
