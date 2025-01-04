@@ -1,5 +1,5 @@
 
-    @startuml
+    @startuml temp_diagram
     rectangle GUI {
         component "Login" as Login
         component "Article Generator" as Generator
