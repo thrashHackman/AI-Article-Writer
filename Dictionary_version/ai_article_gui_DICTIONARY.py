@@ -9,6 +9,10 @@ import sqlite3 # Import the SQLite3 module
 from plantuml import PlantUML # Import the PlantUML module
 from dotenv import load_dotenv # Import the load_dotenv function from the dotenv module
 import re # Import the re module
+from captcha.image import ImageCaptcha
+from PIL import Image, ImageTk
+import random
+import string
 
 # Constants
 PLANTUML_JAR = "/home/tahraun/plantuml/plantuml.jar" # Path to the PlantUML JAR file
@@ -34,6 +38,17 @@ def generate_diagram(diagram_code, output_file):
         print(f"Diagram generated: {output_file}")
     except Exception as e:
         print(f"Error generating diagram: {e}")
+
+# Generate a CAPTCHA image
+def generate_captcha_text():
+    """Generate a random string for CAPTCHA."""
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+
+def generate_captcha_image(text):
+    """Generate a CAPTCHA image."""
+    image = ImageCaptcha()
+    captcha_image = image.generate_image(text)
+    return captcha_image
 
 # Create a workflow diagram
 def create_workflow_diagram():
@@ -246,11 +261,31 @@ def register_screen(app):
     password_entry.pack(pady=10)
     password_entry.insert(0, "Password")
 
+    # Generate CAPTCHA
+    captcha_text = generate_captcha_text()
+    captcha_image = generate_captcha_image(captcha_text)
+
+    # Display CAPTCHA
+    captcha_photo = ImageTk.PhotoImage(captcha_image)
+    captcha_label = ttk.Label(app, image=captcha_photo)
+    captcha_label.image = captcha_photo
+    captcha_label.pack(pady=10)
+
+    # CAPTCHA input
+    captcha_entry = ttk.Entry(app, font=("Helvetica", 14), width=10)
+    captcha_entry.pack(pady=10)
+
     def register():
         username = username_entry.get().strip()
         password = password_entry.get().strip()
         if not username or not password:
             Messagebox.show_error("Username and password cannot be empty.", "Registration Error")
+            return
+        
+        # Validate CAPTCHA
+        user_captcha = captcha_entry.get().strip()
+        if user_captcha != captcha_text:
+            Messagebox.show_error("CAPTCHA validation failed. Please try again.", "CAPTCHA Error")
             return
         
         # Validate username format
