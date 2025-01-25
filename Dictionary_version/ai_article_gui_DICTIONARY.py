@@ -14,6 +14,8 @@ from PIL import Image, ImageTk
 import random
 import string
 
+# test
+
 # Constants
 PLANTUML_JAR = "/home/tahraun/plantuml/plantuml.jar" # Path to the PlantUML JAR file
 DB_FILE = "users.db" # Path to the SQLite database file
