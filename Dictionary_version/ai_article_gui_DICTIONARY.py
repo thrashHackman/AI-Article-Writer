@@ -34,7 +34,7 @@ def generate_diagram(diagram_code, output_file):
     try:
         # Run PlantUML locally to generate the diagram
         import subprocess
-        subprocess.run(["java", "-jar", PLANTUML_JAR, "temp_diagram.puml", "-o", output_file], check=True)
+        subprocess.run(["java", "-jar", PLANTUML_JAR, "temp_diagram_test.puml", "-o", output_file], check=True)
         print(f"Diagram generated: {output_file}")
     except Exception as e:
         print(f"Error generating diagram: {e}")
